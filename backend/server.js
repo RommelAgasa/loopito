@@ -81,4 +81,13 @@ const startServer = async () => {
   });
 };
 
-startServer();
+// Export for Vercel
+export default async (req, res) => {
+  // Handle requests
+  res.status(404).json({ message: 'Not found' });
+};
+
+// Start server for local development
+if (process.env.NODE_ENV !== 'production') {
+  startServer();
+}
