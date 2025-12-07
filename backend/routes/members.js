@@ -1,0 +1,13 @@
+import express from 'express';
+import { getMembers, addMember, updateMember, deleteMember } from '../controllers/MemberController.js';
+import { verifyToken } from '../middleware/auth.js';
+
+const router = express.Router();
+
+// Protected routes - require admin authentication
+router.get('/', verifyToken, getMembers);
+router.post('/', verifyToken, addMember);
+router.put('/:id', verifyToken, updateMember);  
+router.delete('/:id', verifyToken, deleteMember);
+
+export default router;
