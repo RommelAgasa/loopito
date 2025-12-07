@@ -1,6 +1,6 @@
 import { X, User, Loader } from 'lucide-react';
 import { useState } from 'react';
-import { API_BASE } from './config';
+import { API_BASE } from '../config';
 
 export default function AdminModal({ data, onChange, onClose, error }) {
   const [isLoading, setIsLoading] = useState(false);
