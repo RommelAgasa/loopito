@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // CORS
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
 }));
 
@@ -35,7 +35,39 @@ const connectDB = async () => {
   }
 };
 
-// Connect to DB before starting server
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'Server is running' });
+});
+
+// Test route
+app.post('/test', (req, res) => {
+  res.json({ message: 'Test route works!' });
+});
+
+// Routes
+app.use('/admin', admin);
+app.use('/api/members', members);
+app.use('/api/passcodes', passcodes);
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+  });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Server error',
+  });
+});
+
+// Connect to DB and start server
 const startServer = async () => {
   const dbConnected = await connectDB();
   
@@ -44,50 +76,15 @@ const startServer = async () => {
     process.exit(1);
   }
 
-  // Health check
-  app.get('/health', (req, res) => {
-    res.json({ status: 'Server is running' });
-  });
-
-  // Test route
-  app.post('/test', (req, res) => {
-    res.json({ message: 'Test route works!' });
-  });
-
-  // Routes
-  app.use('/admin', admin);
-  app.use('/members', members);
-  app.use('/passcodes', passcodes);
-
-  // 404 handler
-  app.use((req, res) => {
-    res.status(404).json({
-      success: false,
-      message: 'Route not found',
-    });
-  });
-
-  // Error handler
-  app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    res.status(500).json({
-      success: false,
-      message: 'Server error',
-    });
-  });
-
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
   });
 };
 
-// Export for Vercel
-export default async (req, res) => {
-  // Handle requests
-  res.status(404).json({ message: 'Not found' });
-};
-
-// Start server for local development
+// For local development
 if (process.env.NODE_ENV !== 'production') {
   startServer();
 }
+
+// Export for Vercel
+export default app;
