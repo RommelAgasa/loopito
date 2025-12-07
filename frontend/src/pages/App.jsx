@@ -5,7 +5,7 @@ import Snowfall from '../components/Snowfall';
 import UserModal from '../components/UserModal';
 import AdminModal from '../components/AdminModal';
 import PickGrid from '../components/PickGrid';
-import ThankYou from '../components/ThankYou';
+import ThankYou from '../components/Thankyou';
 
 export default function App() {
   const navigate = useNavigate();
