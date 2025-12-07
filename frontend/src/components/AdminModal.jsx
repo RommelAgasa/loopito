@@ -1,5 +1,6 @@
 import { X, User, Loader } from 'lucide-react';
 import { useState } from 'react';
+import { API_BASE } from './config';
 
 export default function AdminModal({ data, onChange, onClose, error }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +20,7 @@ export default function AdminModal({ data, onChange, onClose, error }) {
       }
 
       // Call login API
-      const response = await fetch('/api/admin/login', {
+      const response = await fetch(`${API_BASE}api/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
