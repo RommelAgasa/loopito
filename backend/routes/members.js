@@ -11,6 +11,14 @@ import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
+
+console.log('Members router loaded');
+
+router.post('/verify', (req, res) => {
+  console.log('Verify route hit');
+  res.json({ test: 'verify works' });
+});
+
 // Specific routes FIRST (before dynamic :id routes)
 router.post('/verify', verifyMember);
 router.put('/pick/:id', verifyToken, updateMemberPickStatus);
