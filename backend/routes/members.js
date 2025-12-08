@@ -4,7 +4,8 @@ import {
     addMember, 
     updateMember, 
     deleteMember, 
-    verifyMember
+    verifyMember,
+    updateMemberPickStatus
 } from '../controllers/MemberController.js';
 import { verifyToken } from '../middleware/auth.js';
 
@@ -18,5 +19,7 @@ router.put('/:id', verifyToken, updateMember);
 router.delete('/:id', verifyToken, deleteMember);
 
 router.post('/verify', verifyMember);
+router.put('/pick/:id', verifyToken, updateMemberPickStatus);
+
 
 export default router;

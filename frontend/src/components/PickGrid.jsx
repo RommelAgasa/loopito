@@ -64,18 +64,30 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
       const token = localStorage.getItem('userToken');
 
       // Update picked member
-      await fetch(`${API_BASE}api/members/${member._id}`, {
+      // Update picked member
+      await fetch(`${API_BASE}api/members/pick/${member._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ firstname: member.firstname, lastname: member.lastname, isPick: 1, hasPick: member.hasPick }),
+        body: JSON.stringify({
+          isPick: 1,
+          hasPick: member.hasPick,
+          pickMember: loggedInUserId
+        }),
       });
+
 
       // Update current user
       if (loggedInUserId) {
         await fetch(`${API_BASE}api/members/${loggedInUserId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ firstname: userInfo.firstName, lastname: userInfo.lastName, hasPick: 1, isPick: 0 }),
+          body: JSON.stringify({
+            firstname: userInfo.firstName,
+            lastname: userInfo.lastName,
+            hasPick: 1,
+            isPick: 0,
+            pickMember: member._id // <-- save which member they picked
+          }),
         });
       }
 
@@ -87,6 +99,7 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
       );
     }
   };
+
 
   if (loading) return (
     <div className="bg-white rounded-2xl shadow-2xl p-8 border-4 border-emerald-700 max-w-4xl mx-auto text-center">

@@ -112,7 +112,7 @@ export const addMember = async (req, res) => {
  */
 export const updateMember = async (req, res) => {
   const { id } = req.params;
-  const { firstname, lastname, hasPick, isPick } = req.body;
+  const { firstname, lastname} = req.body;
 
   try {
     await connectToDatabase(); // Ensure DB connection
@@ -129,8 +129,6 @@ export const updateMember = async (req, res) => {
       {
         firstname,
         lastname,
-        hasPick: hasPick ?? 0,
-        isPick: isPick ?? 0,
         updatedAt: new Date(),
       },
       { new: true }
@@ -193,16 +191,17 @@ export const deleteMember = async (req, res) => {
  */
 export const updateMemberPickStatus = async (req, res) => {
   const { id } = req.params;
-  const { hasPick, isPick } = req.body;
+  const { hasPick, isPick, pickMember } = req.body;
 
   try {
-    await connectToDatabase(); // Ensure DB connection
+    await connectToDatabase(); 
 
     const member = await Member.findByIdAndUpdate(
       id,
       {
         ...(hasPick !== undefined && { hasPick }),
         ...(isPick !== undefined && { isPick }),
+        ...(pickMember && { pickMember }),
         updatedAt: new Date(),
       },
       { new: true }
@@ -228,3 +227,4 @@ export const updateMemberPickStatus = async (req, res) => {
     });
   }
 };
+
