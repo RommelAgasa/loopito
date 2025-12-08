@@ -9,7 +9,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
     setFormError('');
 
     // Step 0: Local validation
-    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.passcode.trim()) {
+    if (!formData.firstname.trim() || !formData.lastname.trim() || !formData.passcode.trim()) {
       setFormError('Please fill in all fields');
       return;
     }
@@ -41,8 +41,8 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          firstname: formData.firstName,
-          lastname: formData.lastName,
+          firstname: formData.firstname,
+          lastname: formData.lastname,
         }),
       });
 
@@ -61,7 +61,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
       // Step 3: Check if member already made a pick
       if (foundMember.hasPick === 1) {
         setFormError(
-          `${formData.firstName}, you have already made your pick! 🎁 Your secret recipient is waiting for you.`
+          `${formData.firstname}, you have already made your pick! 🎁 Your secret recipient is waiting for you.`
         );
         setIsLoading(false);
         return;
@@ -101,12 +101,12 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
         </div>
 
         <div className="space-y-4">
-          {['firstname', 'lastname', 'passcode'].map((field) => (
+          {['firstName', 'lastName', 'passcode'].map((field) => (
             <div key={field}>
               <label className="block text-xs sm:text-sm font-semibold text-emerald-900 mb-2 capitalize">
-                {field === 'firstname'
+                {field === 'firstName'
                   ? 'First Name'
-                  : field === 'lastname'
+                  : field === 'lastName'
                   ? 'Last Name'
                   : 'Passcode'}
               </label>
@@ -119,7 +119,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
                 placeholder={
                   field === 'passcode'
                     ? '••••••'
-                    : field === 'firstname'
+                    : field === 'firstName'
                     ? 'First Name'
                     : 'Last Name'
                 }
