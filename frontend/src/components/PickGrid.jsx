@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE } from '../config';
 
 export default function PickGrid({ picks, onPick, selectedName, userInfo, loggedInUserId }) {
   const [members, setMembers] = useState([]);
@@ -18,7 +19,7 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
   const fetchMembers = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('/api/members', {
+      const response = await fetch(`${API_BASE}api/members'`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -53,7 +54,7 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
       const token = localStorage.getItem('adminToken');
 
       // Update the picked member's isPick to 1
-      const pickResponse = await fetch(`/api/members/${member._id}`, {
+      const pickResponse = await fetch(`${API_BASE}api/members/${member._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +75,7 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
 
       // Update the logged-in user's hasPick to 1
       if (loggedInUserId) {
-        const currentUserResponse = await fetch(`/api/members/${loggedInUserId}`, {
+        const currentUserResponse = await fetch(`${API_BASE}api/members/${loggedInUserId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

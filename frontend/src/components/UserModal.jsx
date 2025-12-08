@@ -1,5 +1,6 @@
 import { X, Gift } from 'lucide-react';
 import { useState } from 'react';
+import { API_BASE } from '../config';
 
 export default function UserModal({ formData, onChange, onSubmit, onClose, formError, setFormError, setLoggedInUserId }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,9 +19,9 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
 
     try {
       // Step 1: Verify passcode
-      const passcodeResponse = await fetch('/api/passcodes/verify', {
+      const passcodeResponse = await fetch(`${API_BASE}api/passcodes/verify`, {
         method: 'POST',
-        headers: {
+        headers: { 
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ code: formData.passcode }),
@@ -35,7 +36,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
       }
 
       // Step 2: Check if member exists
-      const membersResponse = await fetch('/api/members', {
+      const membersResponse = await fetch(`${API_BASE}api/members`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken') || ''}`,
         },
