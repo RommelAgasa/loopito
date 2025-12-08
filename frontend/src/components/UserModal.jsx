@@ -101,12 +101,12 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
         </div>
 
         <div className="space-y-4">
-          {['firstName', 'lastName', 'passcode'].map((field) => (
+          {['firstname', 'lastname', 'passcode'].map((field) => (
             <div key={field}>
               <label className="block text-xs sm:text-sm font-semibold text-emerald-900 mb-2 capitalize">
-                {field === 'firstName'
+                {field === 'firstname'
                   ? 'First Name'
-                  : field === 'lastName'
+                  : field === 'lastname'
                   ? 'Last Name'
                   : 'Passcode'}
               </label>
@@ -119,7 +119,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
                 placeholder={
                   field === 'passcode'
                     ? '••••••'
-                    : field === 'firstName'
+                    : field === 'firstname'
                     ? 'First Name'
                     : 'Last Name'
                 }
