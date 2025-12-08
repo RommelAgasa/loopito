@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Snowfall from '../components/Snowfall';
@@ -24,6 +24,27 @@ export default function App() {
   const [showPickedName, setShowPickedName] = useState(true);
   const [loggedInUserId, setLoggedInUserId] = useState(null);
 
+  // Restore state from localStorage on mount
+  useEffect(() => {
+    const savedUserInfo = localStorage.getItem('userInfo');
+    const savedLoggedInUserId = localStorage.getItem('loggedInUserId');
+    const savedPicks = localStorage.getItem('picks');
+    const savedHasPickedOnce = localStorage.getItem('hasPickedOnce');
+
+    if (savedUserInfo) {
+      setUserInfo(JSON.parse(savedUserInfo));
+    }
+    if (savedLoggedInUserId) {
+      setLoggedInUserId(savedLoggedInUserId);
+    }
+    if (savedPicks) {
+      setPicks(JSON.parse(savedPicks));
+    }
+    if (savedHasPickedOnce) {
+      setHasPickedOnce(JSON.parse(savedHasPickedOnce));
+    }
+  }, []);
+
   // Form Handlers
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -38,11 +59,13 @@ export default function App() {
   };
 
   const handleFormSubmit = () => {
-    setUserInfo({ 
+    const newUserInfo = { 
       fullName: `${formData.firstName} ${formData.lastName}`, 
       firstName: formData.firstName, 
       lastName: formData.lastName 
-    });
+    };
+    setUserInfo(newUserInfo);
+    localStorage.setItem('userInfo', JSON.stringify(newUserInfo));
     setIsModalOpen(false);
   };
 
@@ -54,12 +77,15 @@ export default function App() {
 
   const handlePick = (item) => {
     if (!picks[item.id]) {
-      setPicks({ ...picks, [item.id]: item.name });
+      const newPicks = { ...picks, [item.id]: item.name };
+      setPicks(newPicks);
+      localStorage.setItem('picks', JSON.stringify(newPicks));
       setSelectedName(item.name);
       setShowPickedName(true);
       setTimeout(() => {
         setSelectedName(null);
         setHasPickedOnce(true);
+        localStorage.setItem('hasPickedOnce', JSON.stringify(true));
         setTimeout(() => setShowPickedName(false), 5000);
       }, 10000);
     }
@@ -71,6 +97,10 @@ export default function App() {
     setFormData({ firstName: '', lastName: '', passcode: '' });
     setUserInfo(null);
     setShowPickedName(true);
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('loggedInUserId');
+    localStorage.removeItem('picks');
+    localStorage.removeItem('hasPickedOnce');
   };
 
   return (
@@ -124,7 +154,10 @@ export default function App() {
           onClose={() => setIsModalOpen(false)}
           formError={formError}
           setFormError={setFormError}
-          setLoggedInUserId={setLoggedInUserId}
+          setLoggedInUserId={(id) => {
+            setLoggedInUserId(id);
+            localStorage.setItem('loggedInUserId', id);
+          }}
         />
       )}
 
