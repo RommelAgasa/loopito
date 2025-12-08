@@ -46,7 +46,7 @@ export default function AdminModal({ data, onChange, onClose, error }) {
 
         // Close modal and redirect
         onClose();
-        window.location.href = `${API_BASE}`;
+        window.location.href = "/";
       } else {
         setLocalError('Login failed. Please try again.');
       }
