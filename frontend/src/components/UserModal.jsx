@@ -41,8 +41,8 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          first_name: formData.firstName,
-          last_name: formData.lastName,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
         }),
       });
 
