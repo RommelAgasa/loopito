@@ -8,32 +8,44 @@ import { generateToken, verifyToken } from '../middleware/auth.js';
  */
 export const verifyMember = async (req, res) => {
   const { firstname, lastname } = req.body;
+  
+  console.log('=== verifyMember called ===');
+  console.log('Received firstname:', firstname);
+  console.log('Received lastname:', lastname);
 
   try {
     await connectToDatabase();
+    console.log('DB connected');
 
     if (!firstname || !lastname) {
+      console.log('Missing firstname or lastname');
       return res.status(400).json({
         success: false,
         message: 'First name and last name are required',
       });
     }
 
+    console.log('Searching for member with regex...');
     const member = await Member.findOne({
       firstname: { $regex: new RegExp(`^${firstname}$`, 'i') },
       lastname: { $regex: new RegExp(`^${lastname}$`, 'i') },
     });
 
+    console.log('Member found:', member);
+
     if (!member) {
+      console.log('Member not found - returning 404');
       return res.status(404).json({
         success: false,
         message: 'Member not found',
       });
     }
 
-    // Generate JWT only if member exists
+    console.log('Generating token...');
     const token = generateToken(member);
+    console.log('Token generated:', token);
 
+    console.log('Sending success response');
     res.json({
       success: true,
       member,
@@ -41,13 +53,13 @@ export const verifyMember = async (req, res) => {
     });
   } catch (err) {
     console.error('Verify member error:', err);
+    console.error('Error stack:', err.stack);
     res.status(500).json({
       success: false,
       message: 'Failed to verify member',
     });
   }
 };
-
 
 /**
  * Get all members
