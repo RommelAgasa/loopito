@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Trash2, Edit2 } from 'lucide-react';
+import { Trash2, Edit2, Loader } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Snowfall from '../components/Snowfall';
@@ -20,19 +20,27 @@ export default function Admin() {
   const [error, setError] = useState('');
   const [passcodeError, setPasscodeError] = useState('');
   const [passcodeLoading, setPasscodeLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [membersLoading, setMembersLoading] = useState(false);
+  const [passcodesLoading, setPasscodesLoading] = useState(false);
 
   // Get token from localStorage
   const getToken = () => localStorage.getItem('adminToken');
 
   // Fetch members and passcodes on mount
   useEffect(() => {
-    fetchMembers();
-    fetchPasscodes();
+    const loadData = async () => {
+      setInitialLoading(true);
+      await Promise.all([fetchMembers(), fetchPasscodes()]);
+      setInitialLoading(false);
+    };
+    loadData();
   }, []);
 
   // Fetch all members
   const fetchMembers = async () => {
     try {
+      setMembersLoading(true);
       const token = getToken();
       if (!token) {
         navigate('/');
@@ -58,12 +66,15 @@ export default function Admin() {
       }
     } catch (err) {
       console.error('Fetch members error:', err);
+    } finally {
+      setMembersLoading(false);
     }
   };
 
   // Fetch all passcodes
   const fetchPasscodes = async () => {
     try {
+      setPasscodesLoading(true);
       const token = getToken();
       if (!token) return;
 
@@ -84,6 +95,8 @@ export default function Admin() {
       }
     } catch (err) {
       console.error('Fetch passcodes error:', err);
+    } finally {
+      setPasscodesLoading(false);
     }
   };
 
@@ -99,7 +112,7 @@ export default function Admin() {
 
     try {
       const token = getToken();
-      const url = editingMemberId ? `${API_BASE}api/members/${editingMemberId}` : '/api/members';
+      const url = editingMemberId ? `${API_BASE}api/members/${editingMemberId}` : `${API_BASE}api/members`;
       const method = editingMemberId ? 'PUT' : 'POST';
       const response = await fetch(url, {
         method,
@@ -237,6 +250,38 @@ export default function Admin() {
     }
   };
 
+  // Loading skeleton component
+  const LoadingSkeleton = () => (
+    <div className="space-y-4">
+      <div className="h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+      <div className="space-y-2">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="h-10 bg-gray-200 rounded-lg animate-pulse"></div>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Initial loading screen
+  if (initialLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 relative overflow-hidden">
+        <Snowfall />
+        <Header onNavigateHome={() => navigate('/')} />
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 py-5 sm:py-8 relative z-10">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 border-4 border-emerald-700">
+            <div className="flex items-center justify-center min-h-96">
+              <div className="text-center">
+                <Loader className="w-12 h-12 text-emerald-700 animate-spin mx-auto mb-4" />
+                <p className="text-emerald-900 font-semibold">Loading dashboard...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 relative overflow-hidden">
       <Snowfall />
@@ -264,7 +309,8 @@ export default function Admin() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleAddMember()}
-                  className="px-4 py-3 border-4 border-emerald-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                  disabled={loading}
+                  className="px-4 py-3 border-4 border-emerald-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm disabled:bg-gray-100"
                 />
                 <input
                   type="text"
@@ -272,53 +318,69 @@ export default function Admin() {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleAddMember()}
-                  className="px-4 py-3 border-4 border-emerald-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                  disabled={loading}
+                  className="px-4 py-3 border-4 border-emerald-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm disabled:bg-gray-100"
                 />
               </div>
               <button
                 onClick={handleAddMember}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-red-600 to-emerald-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all border-2 border-yellow-400 disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-red-600 to-emerald-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all border-2 border-yellow-400 disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {loading ? 'Saving...' : editingMemberId ? 'Update Member' : 'Add Member'}
+                {loading ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : editingMemberId ? (
+                  'Update Member'
+                ) : (
+                  'Add Member'
+                )}
               </button>
 
               <div className="mt-6 overflow-x-auto border-4 border-emerald-700 rounded-lg">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-emerald-700 text-white">
-                      <th className="px-4 py-3 text-left text-sm font-bold">Name</th>
-                      <th className="px-4 py-3 text-center text-sm font-bold">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {members.length > 0 ? members.map(member => (
-                      <tr key={member._id} className="border-t-2 border-emerald-300 hover:bg-emerald-50">
-                        <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">{member.firstname} {member.lastname}</td>
-                        <td className="px-4 py-3 text-center">
-                          <div className="flex gap-2 justify-center">
-                            <button
-                              onClick={() => handleEditMember(member)}
-                              className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteMember(member._id)}
-                              className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
+                {membersLoading ? (
+                  <div className="p-6">
+                    <LoadingSkeleton />
+                  </div>
+                ) : (
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-emerald-700 text-white">
+                        <th className="px-4 py-3 text-left text-sm font-bold">Name</th>
+                        <th className="px-4 py-3 text-center text-sm font-bold">Actions</th>
                       </tr>
-                    )) : (
-                      <tr>
-                        <td colSpan="2" className="px-4 py-6 text-center text-emerald-600 text-sm">No members added yet</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {members.length > 0 ? members.map(member => (
+                        <tr key={member._id} className="border-t-2 border-emerald-300 hover:bg-emerald-50">
+                          <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">{member.firstname} {member.lastname}</td>
+                          <td className="px-4 py-3 text-center">
+                            <div className="flex gap-2 justify-center">
+                              <button
+                                onClick={() => handleEditMember(member)}
+                                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteMember(member._id)}
+                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )) : (
+                        <tr>
+                          <td colSpan="2" className="px-4 py-6 text-center text-emerald-600 text-sm">No members added yet</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
 
@@ -339,7 +401,8 @@ export default function Admin() {
                   value={passcode}
                   onChange={(e) => setPasscode(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleAddPasscode()}
-                  className="px-4 py-3 border-4 border-emerald-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                  disabled={passcodeLoading}
+                  className="px-4 py-3 border-4 border-emerald-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm disabled:bg-gray-100"
                 />
                 <input
                   type="number"
@@ -347,49 +410,63 @@ export default function Admin() {
                   value={expirationDays}
                   onChange={(e) => setExpirationDays(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleAddPasscode()}
-                  className="px-4 py-3 border-4 border-emerald-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm"
+                  disabled={passcodeLoading}
+                  className="px-4 py-3 border-4 border-emerald-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm disabled:bg-gray-100"
                 />
               </div>
               <button
                 onClick={handleAddPasscode}
                 disabled={passcodeLoading}
-                className="w-full bg-gradient-to-r from-red-600 to-emerald-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all border-2 border-yellow-400 disabled:opacity-50 mb-6"
+                className="w-full bg-gradient-to-r from-red-600 to-emerald-700 text-white font-bold py-3 rounded-lg hover:shadow-lg transition-all border-2 border-yellow-400 disabled:opacity-50 mb-6 flex items-center justify-center gap-2"
               >
-                {passcodeLoading ? 'Creating...' : 'Add Passcode'}
+                {passcodeLoading ? (
+                  <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  'Add Passcode'
+                )}
               </button>
 
               <div className="overflow-x-auto border-4 border-emerald-700 rounded-lg">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-emerald-700 text-white">
-                      <th className="px-4 py-3 text-left text-sm font-bold">Passcode</th>
-                      <th className="px-4 py-3 text-left text-sm font-bold">Expiration Date</th>
-                      <th className="px-4 py-3 text-center text-sm font-bold">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {passcodes.length > 0 ? passcodes.map(p => (
-                      <tr key={p._id} className="border-t-2 border-emerald-300 hover:bg-emerald-50">
-                        <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">{p.code}</td>
-                        <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">
-                          {new Date(p.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => handleDeletePasscode(p._id)}
-                            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </td>
+                {passcodesLoading ? (
+                  <div className="p-6">
+                    <LoadingSkeleton />
+                  </div>
+                ) : (
+                  <table className="w-full">
+                    <thead>
+                      <tr className="bg-emerald-700 text-white">
+                        <th className="px-4 py-3 text-left text-sm font-bold">Passcode</th>
+                        <th className="px-4 py-3 text-left text-sm font-bold">Expiration Date</th>
+                        <th className="px-4 py-3 text-center text-sm font-bold">Actions</th>
                       </tr>
-                    )) : (
-                      <tr>
-                        <td colSpan="3" className="px-4 py-6 text-center text-emerald-600 text-sm">No passcodes set</td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {passcodes.length > 0 ? passcodes.map(p => (
+                        <tr key={p._id} className="border-t-2 border-emerald-300 hover:bg-emerald-50">
+                          <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">{p.code}</td>
+                          <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">
+                            {new Date(p.expirationDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <button
+                              onClick={() => handleDeletePasscode(p._id)}
+                              className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      )) : (
+                        <tr>
+                          <td colSpan="3" className="px-4 py-6 text-center text-emerald-600 text-sm">No passcodes set</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
 
