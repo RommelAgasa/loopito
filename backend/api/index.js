@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Allowed origins
+// Allowed origins
 const allowedOrigins = [
   'https://loopito-frontend.vercel.app',
   'http://localhost:3000', // for local dev
