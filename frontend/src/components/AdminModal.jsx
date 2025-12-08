@@ -46,7 +46,7 @@ export default function AdminModal({ data, onChange, onClose, error }) {
 
         // Close modal and redirect to admin dashboard
         onClose();
-        window.location.href = `${FRONTEND_BASE}admin`;
+        window.location.href = `${FRONTEND_BASE}/admin`;
       } else {
         setLocalError('Login failed. Please try again.');
       }

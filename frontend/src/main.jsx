@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import App from './pages/App.jsx';
 import Admin from './pages/Admin.jsx';
+import ProtectedRoute from './components/ProtectedRouteComponent.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -12,8 +13,15 @@ createRoot(document.getElementById('root')).render(
         {/* Main Page */}
         <Route path="/" element={<App />} />
 
-        {/* Admin Page */}
-        <Route path="/admin" element={<Admin />} />
+        {/* Protected Admin Page */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   </StrictMode>
