@@ -46,6 +46,9 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
 
       const verifyResult = await verifyResponse.json();
 
+      console.log('Verify response:', verifyResult); // 👈 ADD THIS
+      console.log('Member object:', verifyResult.member); // 👈 AND THIS
+
       if (!verifyResponse.ok) {
         setFormError(verifyResult.message || 'Member not found');
         setIsLoading(false);
