@@ -17,7 +17,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
     setIsLoading(true);
 
     try {
-      // 2️⃣ Verify passcode
+      // Verify passcode
       const passcodeResponse = await fetch(`${API_BASE}api/passcodes/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,13 +32,15 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
         return;
       }
 
-      // 3️⃣ Verify member
+      // Step 2: Verify if member exists
       const verifyResponse = await fetch(`${API_BASE}api/members/verify`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          firstname: formData.firstName, // FIXED
-          lastname: formData.lastName,   // FIXED
+          firstname: formData.firstName,
+          lastname: formData.lastName,
         }),
       });
 
@@ -52,7 +54,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
 
       const foundMember = verifyResult.member;
 
-      // 4️⃣ Check if member already picked
+      // Check if member already picked
       if (foundMember.hasPick === 1) {
         setFormError(
           `${formData.firstName}, you have already made your pick! 🎁 Your secret recipient is waiting for you.`
@@ -61,11 +63,11 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
         return;
       }
 
-      // 5️⃣ Save token & set user ID
+      //Save token & set user ID
       if (verifyResult.token) localStorage.setItem('userToken', verifyResult.token);
       setLoggedInUserId(foundMember._id);
 
-      // 6️⃣ Proceed to App
+      //Proceed to App
       onSubmit();
     } catch (err) {
       console.error('Validation error:', err);
