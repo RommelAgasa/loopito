@@ -56,7 +56,6 @@ app.get('/api/db-test', async (req, res) => {
 app.use('/api/admin', admin);
 app.use('/api/members', members);
 app.use('/api/passcodes', passcodes);
-app.post('/test-verify', (req, res) => res.json({ message: 'Test route works!' }));
 
 // 404 Handler
 app.use((req, res) => {
