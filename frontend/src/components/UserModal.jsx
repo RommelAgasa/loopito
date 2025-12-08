@@ -118,8 +118,8 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
                   field === 'passcode'
                     ? '••••••'
                     : field === 'firstName'
-                    ? 'John'
-                    : 'Doe'
+                    ? 'Name'
+                    : 'LastName'
                 }
                 className="w-full px-4 py-2 border-2 border-emerald-300 rounded-lg focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-300 transition text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
