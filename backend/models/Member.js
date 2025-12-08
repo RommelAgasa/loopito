@@ -19,11 +19,7 @@ const memberSchema = new mongoose.Schema({
     required: true,
     default: 0
   },
-  pickMember: {
-    type: mongoose.Schema.Types.ObjectId, // store the picked member's _id
-    ref: 'Member', // reference to the Member model
-    default: null
-  },
+  pickMember: { type: mongoose.Schema.Types.ObjectId, ref: 'Member', default: null },
   createdAt: {
     type: Date,
     default: Date.now,

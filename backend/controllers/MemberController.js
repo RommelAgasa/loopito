@@ -54,9 +54,13 @@ export const verifyMember = async (req, res) => {
  */
 export const getMembers = async (req, res) => {
   try {
-    await connectToDatabase(); // Ensure DB connection
-
-    const members = await Member.find().sort({ createdAt: -1 });
+    await connectToDatabase();
+    
+    // Populate pickMember
+    const members = await Member.find()
+                  .populate('pickMember', 'firstname lastname')
+                  .sort({ createdAt: -1 });
+    
     res.json({
       success: true,
       members,
