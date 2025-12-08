@@ -3,6 +3,7 @@ import { Trash2, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Snowfall from '../components/Snowfall';
+import { API_BASE } from '../config';
 
 export default function Admin() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function Admin() {
         return;
       }
 
-      const response = await fetch('/api/members', {
+      const response = await fetch(`${API_BASE}api/members`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -66,7 +67,7 @@ export default function Admin() {
       const token = getToken();
       if (!token) return;
 
-      const response = await fetch('/api/passcodes', {
+      const response = await fetch(`${API_BASE}api/passcodes`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -98,7 +99,7 @@ export default function Admin() {
 
     try {
       const token = getToken();
-      const url = editingMemberId ? `/api/members/${editingMemberId}` : '/api/members';
+      const url = editingMemberId ? `${API_BASE}api/members/${editingMemberId}` : '/api/members';
       const method = editingMemberId ? 'PUT' : 'POST';
       const response = await fetch(url, {
         method,
@@ -147,7 +148,7 @@ export default function Admin() {
 
     try {
       const token = getToken();
-      const response = await fetch(`/api/members/${id}`, {
+      const response = await fetch(`${API_BASE}api/members/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -181,7 +182,7 @@ export default function Admin() {
 
     try {
       const token = getToken();
-      const response = await fetch('/api/passcodes', {
+      const response = await fetch(`${API_BASE}api/passcodes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -221,7 +222,7 @@ export default function Admin() {
 
     try {
       const token = getToken();
-      const response = await fetch(`/api/passcodes/${id}`, {
+      const response = await fetch(`${API_BASE}api/passcodes/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`,
