@@ -69,11 +69,18 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
           isPick: 1,
-          hasPick: 1,
           pickMember: loggedInUserId
         }),
       });
 
+      // Update the picker (current user)
+      await fetch(`${API_BASE}api/members/pick/${loggedInUserId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          hasPick: 1, // mark that they have picked someone
+        }),
+      });
 
       // Update current user
       if (loggedInUserId) {
