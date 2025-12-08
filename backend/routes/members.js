@@ -1,5 +1,10 @@
 import express from 'express';
-import { getMembers, addMember, updateMember, deleteMember } from '../controllers/MemberController.js';
+import { 
+    getMembers, 
+    addMember, 
+    updateMember, 
+    deleteMember, 
+} from '../controllers/MemberController.js';
 import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
