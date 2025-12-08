@@ -16,7 +16,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
-  const [formData, setFormData] = useState({ firstName: '', lastName: '', passcode: '' });
+  const [formData, setFormData] = useState({ firstname: '', lastname: '', passcode: '' });
   const [adminFormData, setAdminFormData] = useState({ username: '', password: '' });
   const [formError, setFormError] = useState('');
   const [adminFormError, setAdminFormError] = useState('');
@@ -39,9 +39,9 @@ export default function App() {
 
   const handleFormSubmit = () => {
     setUserInfo({ 
-      fullName: `${formData.firstName} ${formData.lastName}`, 
-      firstName: formData.firstName, 
-      lastName: formData.lastName 
+      fullName: `${formData.firstname} ${formData.lastname}`, 
+      firstname: formData.firstname, 
+      lastname: formData.lastname 
     });
     setIsModalOpen(false);
   };
@@ -68,7 +68,7 @@ export default function App() {
   const handleRestart = () => {
     setHasPickedOnce(false);
     setPicks({});
-    setFormData({ firstName: '', lastName: '', passcode: '' });
+    setFormData({ firstname: '', lastname: '', passcode: '' });
     setUserInfo(null);
     setShowPickedName(true);
   };
