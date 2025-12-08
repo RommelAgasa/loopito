@@ -4,6 +4,7 @@ import {
     addMember, 
     updateMember, 
     deleteMember, 
+    verifyMember
 } from '../controllers/MemberController.js';
 import { verifyToken } from '../middleware/auth.js';
 
