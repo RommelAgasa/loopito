@@ -33,7 +33,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
       }
 
       // Step 2: Verify if member exists
-      const verifyResponse = await fetch(`${API_BASE}api/verify`, {
+      const verifyResponse = await fetch(`${API_BASE}api/members/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

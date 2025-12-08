@@ -49,7 +49,6 @@ export const verifyMember = async (req, res) => {
 };
 
 
-
 /**
  * Get all members
  */
