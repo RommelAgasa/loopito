@@ -44,6 +44,15 @@ export default function AdminModal({ data, onChange, onClose, error }) {
         localStorage.setItem('adminToken', result.token);
         localStorage.setItem('adminUser', JSON.stringify(result.admin));
 
+        // Store user info from admin data
+        const adminUserInfo = {
+          fullName: result.admin.name || `${result.admin.username}`,
+          firstName: result.admin.name?.split(' ')[0] || result.admin.username,
+          lastName: result.admin.name?.split(' ')[1] || '',
+        };
+        localStorage.setItem('userInfo', JSON.stringify(adminUserInfo));
+        localStorage.setItem('loggedInUserId', result.admin.id || result.admin.username);
+
         // Close modal and redirect
         onClose();
         window.location.href = "/";
