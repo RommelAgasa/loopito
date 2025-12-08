@@ -49,7 +49,7 @@ const connectDB = async () => {
 };
 
 // Connect to DB
-connectDB();
+await connectDB();
 
 app.get('/health', (req, res) => res.json({ status: 'Server is running' }));
 app.post('/test', (req, res) => res.json({ message: 'Test route works!' }));
