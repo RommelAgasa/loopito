@@ -1,7 +1,10 @@
 import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin.js';
+import { connectToDatabase } from '../db/db.js';
 
-// Generate JWT token
+/**
+ * Generate JWT token for admin
+ */
 const generateToken = (admin) => {
   return jwt.sign(
     { id: admin._id, username: admin.username },
@@ -10,10 +13,15 @@ const generateToken = (admin) => {
   );
 };
 
-// Admin Login Controller
+/**
+ * Admin Login Controller
+ */
 export const adminLogin = async (req, res) => {
   const { username, password } = req.body;
+
   try {
+    await connectToDatabase(); // Ensure DB connection
+
     // Validate input
     if (!username || !password) {
       return res.status(400).json({
@@ -24,7 +32,6 @@ export const adminLogin = async (req, res) => {
 
     // Find admin by username
     const admin = await Admin.findOne({ username });
-    console.log(admin);
 
     if (!admin) {
       return res.status(401).json({
@@ -33,9 +40,8 @@ export const adminLogin = async (req, res) => {
       });
     }
 
-    // Verify password (compare with hashed password)
-    // If using bcrypt: const isPasswordValid = await bcrypt.compare(password, admin.password);
-    // For now, simple comparison:
+    // ⚙️ Verify password (simple comparison for now)
+    // For production: use bcrypt.compare(password, admin.password)
     if (admin.password !== password) {
       return res.status(401).json({
         success: false,
@@ -43,18 +49,16 @@ export const adminLogin = async (req, res) => {
       });
     }
 
-    // Generate token
+    // Generate JWT
     const token = generateToken(admin);
-
-    console.log(token);
 
     res.json({
       success: true,
       message: 'Login successful',
       token,
-      admin: { 
-        id: admin._id, 
-        username: admin.username 
+      admin: {
+        id: admin._id,
+        username: admin.username,
       },
     });
   } catch (err) {
@@ -66,11 +70,15 @@ export const adminLogin = async (req, res) => {
   }
 };
 
-// Get Admin Profile (protected route)
+/**
+ * Get Admin Profile (Protected route)
+ */
 export const getAdminProfile = async (req, res) => {
   try {
+    await connectToDatabase(); // Ensure DB connection
+
     const admin = await Admin.findById(req.admin.id).select('-password');
-    
+
     if (!admin) {
       return res.status(404).json({
         success: false,
@@ -91,7 +99,9 @@ export const getAdminProfile = async (req, res) => {
   }
 };
 
-// Logout (optional - can be handled on frontend)
+/**
+ * Admin Logout (Handled on frontend usually)
+ */
 export const adminLogout = (req, res) => {
   res.json({
     success: true,
