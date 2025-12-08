@@ -41,12 +41,14 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          firstname: formData.firstName,
-          lastname: formData.lastName,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
         }),
       });
 
       const verifyResult = await verifyResponse.json();
+      console.log('Verify response:', verifyResult);
+      console.log('Response status:', verifyResponse.status);
 
       if (!verifyResponse.ok) {
         setFormError(verifyResult.message || 'Member not found');
@@ -118,8 +120,8 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
                   field === 'passcode'
                     ? '••••••'
                     : field === 'firstName'
-                    ? 'Name'
-                    : 'LastName'
+                    ? 'First Name'
+                    : 'Last Name'
                 }
                 className="w-full px-4 py-2 border-2 border-emerald-300 rounded-lg focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-300 transition text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
