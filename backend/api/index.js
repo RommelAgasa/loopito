@@ -55,8 +55,8 @@ app.get('/health', (req, res) => res.json({ status: 'Server is running' }));
 app.post('/test', (req, res) => res.json({ message: 'Test route works!' }));
 
 app.use('/admin', admin);
-app.use('/api/members', members);
-app.use('/api/passcodes', passcodes);
+app.use('/members', members);
+app.use('/passcodes', passcodes);
 
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });
