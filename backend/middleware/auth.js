@@ -29,6 +29,7 @@ export const verifyToken = (req, res, next) => {
  * Generate JWT token for
  */
 export const generateToken = (admin) => {
+  if (!member) throw new Error('Cannot generate token: member is null');
   return jwt.sign(
     { id: admin._id, username: admin.username },
     process.env.JWT_SECRET || 'your_jwt_secret_key',

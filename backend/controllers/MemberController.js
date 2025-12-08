@@ -24,15 +24,15 @@ export const verifyMember = async (req, res) => {
       lastname: { $regex: new RegExp(`^${lastname}$`, 'i') },
     });
 
-    // Generate JWT
-    const token = generateToken(member);
-
     if (!member) {
       return res.status(404).json({
         success: false,
         message: 'Member not found',
       });
     }
+
+    // Generate JWT only if member exists
+    const token = generateToken(member);
 
     res.json({
       success: true,
@@ -47,6 +47,7 @@ export const verifyMember = async (req, res) => {
     });
   }
 };
+
 
 
 /**
