@@ -6,10 +6,9 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
-    // Clear previous errors
     setFormError('');
 
-    // Validation
+    // Step 0: Local validation
     if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.passcode.trim()) {
       setFormError('Please fill in all fields');
       return;
@@ -21,7 +20,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
       // Step 1: Verify passcode
       const passcodeResponse = await fetch(`${API_BASE}api/passcodes/verify`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ code: formData.passcode }),
@@ -35,37 +34,29 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
         return;
       }
 
-      // Step 2: Check if member exists
-      const membersResponse = await fetch(`${API_BASE}api/members`, {
+      // Step 2: Verify if member exists
+      const verifyResponse = await fetch(`${API_BASE}api/members/verify`, {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken') || ''}`,
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          firstname: formData.firstName,
+          lastname: formData.lastName,
+        }),
       });
 
-      const membersResult = await membersResponse.json();
+      const verifyResult = await verifyResponse.json();
 
-      if (!membersResponse.ok) {
-        setFormError('Failed to verify member. Please try again.');
+      if (!verifyResponse.ok) {
+        setFormError(verifyResult.message || 'Member not found');
         setIsLoading(false);
         return;
       }
 
-      // Check if user exists in members list
-      const foundMember = membersResult.members?.find(
-        member =>
-          member.firstname.toLowerCase() === formData.firstName.toLowerCase() &&
-          member.lastname.toLowerCase() === formData.lastName.toLowerCase()
-      );
+      const foundMember = verifyResult.member;
 
-      if (!foundMember) {
-        setFormError(
-          `${formData.firstName} ${formData.lastName} is not registered as a member. Please check your name and try again.`
-        );
-        setIsLoading(false);
-        return;
-      }
-
-      // Check if member already made a pick
+      // Step 3: Check if member already made a pick
       if (foundMember.hasPick === 1) {
         setFormError(
           `${formData.firstName}, you have already made your pick! 🎁 Your secret recipient is waiting for you.`
@@ -74,8 +65,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
         return;
       }
 
-      // Step 3: All validations passed, proceed with submission
-      // Save the logged-in user's ID
+      // Step 4: All validations passed — proceed
       setLoggedInUserId(foundMember._id);
       onSubmit();
     } catch (err) {
@@ -111,7 +101,11 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
           {['firstName', 'lastName', 'passcode'].map((field) => (
             <div key={field}>
               <label className="block text-xs sm:text-sm font-semibold text-emerald-900 mb-2 capitalize">
-                {field === 'firstName' ? 'First Name' : field === 'lastName' ? 'Last Name' : 'Passcode'}
+                {field === 'firstName'
+                  ? 'First Name'
+                  : field === 'lastName'
+                  ? 'Last Name'
+                  : 'Passcode'}
               </label>
               <input
                 type={field === 'passcode' ? 'password' : 'text'}

@@ -1,6 +1,49 @@
 import Member from '../models/Member.js';
 import { connectToDatabase } from '../db/db.js';
 
+
+/**
+ * verify member
+ */
+export const verifyMember = async (req, res) => {
+  const { firstname, lastname } = req.body;
+
+  try {
+    await connectToDatabase();
+
+    if (!firstname || !lastname) {
+      return res.status(400).json({
+        success: false,
+        message: 'First name and last name are required',
+      });
+    }
+
+    const member = await Member.findOne({
+      firstname: { $regex: new RegExp(`^${firstname}$`, 'i') },
+      lastname: { $regex: new RegExp(`^${lastname}$`, 'i') },
+    });
+
+    if (!member) {
+      return res.status(404).json({
+        success: false,
+        message: 'Member not found',
+      });
+    }
+
+    res.json({
+      success: true,
+      member,
+    });
+  } catch (err) {
+    console.error('Verify member error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify member',
+    });
+  }
+};
+
+
 /**
  * Get all members
  */
