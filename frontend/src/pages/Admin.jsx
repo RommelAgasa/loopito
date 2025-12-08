@@ -349,6 +349,7 @@ export default function Admin() {
                     <thead>
                       <tr className="bg-emerald-700 text-white">
                         <th className="px-4 py-3 text-left text-sm font-bold">Name</th>
+                        <th className="px-4 py-3 text-left text-sm font-bold">Picked By</th>
                         <th className="px-4 py-3 text-center text-sm font-bold">Actions</th>
                       </tr>
                     </thead>
@@ -362,7 +363,7 @@ export default function Admin() {
                             <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">
                               {member.firstname} {member.lastname}
                             </td>
-                            <td className="px-4 py-3 text-emerald-900 font-semibold text-sm text-center">
+                            <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">
                               {picker ? `${picker.firstname} ${picker.lastname}` : '-'}
                             </td>
                             <td className="px-4 py-3 text-center">
@@ -389,7 +390,6 @@ export default function Admin() {
                         </tr>
                       )}
                     </tbody>
-
                   </table>
                 )}
               </div>
