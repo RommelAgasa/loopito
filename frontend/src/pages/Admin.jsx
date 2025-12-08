@@ -353,32 +353,43 @@ export default function Admin() {
                       </tr>
                     </thead>
                     <tbody>
-                      {members.length > 0 ? members.map(member => (
-                        <tr key={member._id} className="border-t-2 border-emerald-300 hover:bg-emerald-50">
-                          <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">{member.firstname} {member.lastname}</td>
-                          <td className="px-4 py-3 text-center">
-                            <div className="flex gap-2 justify-center">
-                              <button
-                                onClick={() => handleEditMember(member)}
-                                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteMember(member._id)}
-                                className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      )) : (
+                      {members.length > 0 ? members.map(member => {
+                        // Find who picked this member
+                        const picker = members.find(m => m._id === member.pickMember);
+
+                        return (
+                          <tr key={member._id} className="border-t-2 border-emerald-300 hover:bg-emerald-50">
+                            <td className="px-4 py-3 text-emerald-900 font-semibold text-sm">
+                              {member.firstname} {member.lastname}
+                            </td>
+                            <td className="px-4 py-3 text-emerald-900 font-semibold text-sm text-center">
+                              {picker ? `${picker.firstname} ${picker.lastname}` : '-'}
+                            </td>
+                            <td className="px-4 py-3 text-center">
+                              <div className="flex gap-2 justify-center">
+                                <button
+                                  onClick={() => handleEditMember(member)}
+                                  className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteMember(member._id)}
+                                  className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      }) : (
                         <tr>
-                          <td colSpan="2" className="px-4 py-6 text-center text-emerald-600 text-sm">No members added yet</td>
+                          <td colSpan="3" className="px-4 py-6 text-center text-emerald-600 text-sm">No members added yet</td>
                         </tr>
                       )}
                     </tbody>
+
                   </table>
                 )}
               </div>

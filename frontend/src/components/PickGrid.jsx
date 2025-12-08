@@ -64,13 +64,12 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
       const token = localStorage.getItem('userToken');
 
       // Update picked member
-      // Update picked member
       await fetch(`${API_BASE}api/members/pick/${member._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({
           isPick: 1,
-          hasPick: member.hasPick,
+          hasPick: 1,
           pickMember: loggedInUserId
         }),
       });
