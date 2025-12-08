@@ -8,8 +8,8 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
   const handleSubmit = async () => {
     setFormError('');
 
-    // Step 0: Local validation
-    if (!formData.firstname.trim() || !formData.lastname.trim() || !formData.passcode.trim()) {
+    // 1️⃣ Local validation
+    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.passcode.trim()) {
       setFormError('Please fill in all fields');
       return;
     }
@@ -17,12 +17,10 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
     setIsLoading(true);
 
     try {
-      // Step 1: Verify passcode
+      // 2️⃣ Verify passcode
       const passcodeResponse = await fetch(`${API_BASE}api/passcodes/verify`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: formData.passcode }),
       });
 
@@ -34,21 +32,17 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
         return;
       }
 
-      // Step 2: Verify if member exists
+      // 3️⃣ Verify member
       const verifyResponse = await fetch(`${API_BASE}api/members/verify`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          firstname: formData.firstname,
-          lastname: formData.lastname,
+          firstname: formData.firstName, // FIXED
+          lastname: formData.lastName,   // FIXED
         }),
       });
 
       const verifyResult = await verifyResponse.json();
-      console.log('Verify response:', verifyResult);
-      console.log('Response status:', verifyResponse.status);
 
       if (!verifyResponse.ok) {
         setFormError(verifyResult.message || 'Member not found');
@@ -58,18 +52,20 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
 
       const foundMember = verifyResult.member;
 
-      // Step 3: Check if member already made a pick
+      // 4️⃣ Check if member already picked
       if (foundMember.hasPick === 1) {
         setFormError(
-          `${formData.firstname}, you have already made your pick! 🎁 Your secret recipient is waiting for you.`
+          `${formData.firstName}, you have already made your pick! 🎁 Your secret recipient is waiting for you.`
         );
         setIsLoading(false);
         return;
       }
 
-      localStorage.setItem('userToken', verifyResult.token);
-      // Step 4: All validations passed — proceed
+      // 5️⃣ Save token & set user ID
+      if (verifyResult.token) localStorage.setItem('userToken', verifyResult.token);
       setLoggedInUserId(foundMember._id);
+
+      // 6️⃣ Proceed to App
       onSubmit();
     } catch (err) {
       console.error('Validation error:', err);
@@ -116,13 +112,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
                 value={formData[field]}
                 onChange={onChange}
                 disabled={isLoading}
-                placeholder={
-                  field === 'passcode'
-                    ? '••••••'
-                    : field === 'firstName'
-                    ? 'First Name'
-                    : 'Last Name'
-                }
+                placeholder={field === 'passcode' ? '••••••' : field === 'firstName' ? 'First Name' : 'Last Name'}
                 className="w-full px-4 py-2 border-2 border-emerald-300 rounded-lg focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-300 transition text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
             </div>
