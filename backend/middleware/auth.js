@@ -31,7 +31,11 @@ export const verifyToken = (req, res, next) => {
 export const generateToken = (user) => {
   if (!user) throw new Error('Cannot generate token: member is null');
   return jwt.sign(
-    { id: user._id, username: user.username },
+    { 
+      id: user._id, 
+      firstname: user.firstname,
+      lastname: user.lastname
+    },
     process.env.JWT_SECRET || 'your_jwt_secret_key',
     { expiresIn: '24h' }
   );
