@@ -101,8 +101,12 @@ export default function Admin() {
   };
 
   // Add or update member
+  // Add or update member
   const handleAddMember = async () => {
-    if (!firstName.trim() || !lastName.trim()) {
+    const trimmedFirstName = firstName.trim();
+    const trimmedLastName = lastName.trim();
+
+    if (!trimmedFirstName || !trimmedLastName) {
       setError('Please fill in all fields');
       return;
     }
@@ -121,8 +125,8 @@ export default function Admin() {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ 
-          firstname: firstName, 
-          lastname: lastName 
+          firstname: trimmedFirstName, 
+          lastname: trimmedLastName 
         }),
       });
 
@@ -185,7 +189,10 @@ export default function Admin() {
 
   // Add passcode
   const handleAddPasscode = async () => {
-    if (!passcode.trim() || !expirationDays.trim()) {
+    const trimmedPasscode = passcode.trim();
+    const trimmedExpirationDays = expirationDays.trim();
+
+    if (!trimmedPasscode || !trimmedExpirationDays) {
       setPasscodeError('Please fill in all fields');
       return;
     }
@@ -202,8 +209,8 @@ export default function Admin() {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          code: passcode,
-          expirationDays: parseInt(expirationDays),
+          code: trimmedPasscode,
+          expirationDays: parseInt(trimmedExpirationDays),
         }),
       });
 
