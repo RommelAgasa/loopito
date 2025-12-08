@@ -1,8 +1,14 @@
+// PasscodeController.js
 import Passcode from '../models/Passcode.js';
+import { connectToDatabase } from '../db/db.js';
 
-// Create a new passcode
+/**
+ * Create a new passcode (Admin only)
+ */
 export const createPasscode = async (req, res) => {
   try {
+    await connectToDatabase(); // Ensure DB connection
+
     const { code, expirationDays } = req.body;
 
     if (!code || !expirationDays) {
@@ -29,7 +35,7 @@ export const createPasscode = async (req, res) => {
       message: 'Passcode created successfully',
       passcode: {
         _id: passcode._id,
-        code: '••••••••', // Don't send actual code back
+        code: '••••••••', // Don't expose actual code
         expirationDate: passcode.validityDay,
         status: passcode.status,
       },
@@ -43,14 +49,18 @@ export const createPasscode = async (req, res) => {
   }
 };
 
-// Get all passcodes
+/**
+ * Get all passcodes (Admin only)
+ */
 export const getAllPasscodes = async (req, res) => {
   try {
+    await connectToDatabase(); // Ensure DB connection
+
     const passcodes = await Passcode.find().sort({ dateCreated: -1 });
 
-    const formattedPasscodes = passcodes.map(p => ({
+    const formattedPasscodes = passcodes.map((p) => ({
       _id: p._id,
-      code: '••••••••', // Don't expose actual codes
+      code: '••••••••', // Hide actual code
       expirationDate: p.validityDay,
       status: p.status,
       dateCreated: p.dateCreated,
@@ -69,11 +79,14 @@ export const getAllPasscodes = async (req, res) => {
   }
 };
 
-// Delete a passcode
+/**
+ * Delete a passcode by ID (Admin only)
+ */
 export const deletePasscode = async (req, res) => {
   try {
-    const { id } = req.params;
+    await connectToDatabase(); // Ensure DB connection
 
+    const { id } = req.params;
     const passcode = await Passcode.findByIdAndDelete(id);
 
     if (!passcode) {
@@ -96,11 +109,14 @@ export const deletePasscode = async (req, res) => {
   }
 };
 
-// Verify a passcode (for signup/login)
+/**
+ * Verify a passcode (Public route for signup/login)
+ */
 export const verifyPasscode = async (req, res) => {
   try {
-    const { code } = req.body;
+    await connectToDatabase(); // Ensure DB connection
 
+    const { code } = req.body;
     if (!code) {
       return res.status(400).json({
         success: false,
