@@ -54,7 +54,8 @@ connectDB();
 app.get('/health', (req, res) => res.json({ status: 'Server is running' }));
 app.post('/test', (req, res) => res.json({ message: 'Test route works!' }));
 
-app.use('/admin', admin);
+// All routes should be prefixed with /api to match frontend requests
+app.use('/api/admin', admin);
 app.use('/api/members', members);
 app.use('/api/passcodes', passcodes);
 
