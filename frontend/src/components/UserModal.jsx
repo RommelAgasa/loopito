@@ -65,6 +65,7 @@ export default function UserModal({ formData, onChange, onSubmit, onClose, formE
         return;
       }
 
+      localStorage.setItem('userToken', verifyResult.token);
       // Step 4: All validations passed — proceed
       setLoggedInUserId(foundMember._id);
       onSubmit();

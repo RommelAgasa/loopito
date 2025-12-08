@@ -1,17 +1,7 @@
 import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin.js';
 import { connectToDatabase } from '../db/db.js';
-
-/**
- * Generate JWT token for admin
- */
-const generateToken = (admin) => {
-  return jwt.sign(
-    { id: admin._id, username: admin.username },
-    process.env.JWT_SECRET || 'your_jwt_secret_key',
-    { expiresIn: '24h' }
-  );
-};
+import { generateToken, verifyToken } from '../middleware/auth.js';
 
 /**
  * Admin Login Controller

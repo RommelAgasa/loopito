@@ -24,3 +24,14 @@ export const verifyToken = (req, res, next) => {
     });
   }
 };
+
+/**
+ * Generate JWT token for
+ */
+export const generateToken = (admin) => {
+  return jwt.sign(
+    { id: admin._id, username: admin.username },
+    process.env.JWT_SECRET || 'your_jwt_secret_key',
+    { expiresIn: '24h' }
+  );
+};

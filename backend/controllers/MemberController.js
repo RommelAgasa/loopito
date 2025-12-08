@@ -1,6 +1,7 @@
+import jwt from 'jsonwebtoken';
 import Member from '../models/Member.js';
 import { connectToDatabase } from '../db/db.js';
-
+import { generateToken, verifyToken } from '../middleware/auth.js';
 
 /**
  * verify member
@@ -23,6 +24,9 @@ export const verifyMember = async (req, res) => {
       lastname: { $regex: new RegExp(`^${lastname}$`, 'i') },
     });
 
+    // Generate JWT
+    const token = generateToken(member);
+
     if (!member) {
       return res.status(404).json({
         success: false,
@@ -33,6 +37,7 @@ export const verifyMember = async (req, res) => {
     res.json({
       success: true,
       member,
+      token
     });
   } catch (err) {
     console.error('Verify member error:', err);

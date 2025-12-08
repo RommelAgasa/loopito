@@ -26,7 +26,7 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
 
   const fetchMembers = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('userToken');
       const response = await fetch(`${API_BASE}api/members`, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
@@ -61,7 +61,7 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
     onPick({ id: member._id, name: member.firstname });
 
     try {
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('userToken');
 
       // Update picked member
       await fetch(`${API_BASE}api/members/${member._id}`, {
