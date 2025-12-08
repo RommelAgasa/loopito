@@ -1,8 +1,13 @@
 import Member from '../models/Member.js';
+import { connectToDatabase } from '../db/db.js';
 
-// Get all members
+/**
+ * Get all members
+ */
 export const getMembers = async (req, res) => {
   try {
+    await connectToDatabase(); // Ensure DB connection
+
     const members = await Member.find().sort({ createdAt: -1 });
     res.json({
       success: true,
@@ -17,12 +22,15 @@ export const getMembers = async (req, res) => {
   }
 };
 
-// Add member
+/**
+ * Add a new member
+ */
 export const addMember = async (req, res) => {
   const { firstname, lastname } = req.body;
-  
+
   try {
-    // Validate input
+    await connectToDatabase(); // Ensure DB connection
+
     if (!firstname || !lastname) {
       return res.status(400).json({
         success: false,
@@ -30,7 +38,6 @@ export const addMember = async (req, res) => {
       });
     }
 
-    // Create new member
     const member = await Member.create({
       firstname,
       lastname,
@@ -52,12 +59,16 @@ export const addMember = async (req, res) => {
   }
 };
 
-// Update member
+/**
+ * Update a member
+ */
 export const updateMember = async (req, res) => {
   const { id } = req.params;
   const { firstname, lastname, hasPick, isPick } = req.body;
 
   try {
+    await connectToDatabase(); // Ensure DB connection
+
     if (!firstname || !lastname) {
       return res.status(400).json({
         success: false,
@@ -67,11 +78,11 @@ export const updateMember = async (req, res) => {
 
     const member = await Member.findByIdAndUpdate(
       id,
-      { 
-        firstname, 
+      {
+        firstname,
         lastname,
-        hasPick: hasPick !== undefined ? hasPick : 0,
-        isPick: isPick !== undefined ? isPick : 0,
+        hasPick: hasPick ?? 0,
+        isPick: isPick ?? 0,
         updatedAt: new Date(),
       },
       { new: true }
@@ -98,11 +109,15 @@ export const updateMember = async (req, res) => {
   }
 };
 
-// Delete member
+/**
+ * Delete a member
+ */
 export const deleteMember = async (req, res) => {
   const { id } = req.params;
 
   try {
+    await connectToDatabase(); // Ensure DB connection
+
     const member = await Member.findByIdAndDelete(id);
 
     if (!member) {
@@ -125,17 +140,21 @@ export const deleteMember = async (req, res) => {
   }
 };
 
-// Update member pick status
+/**
+ * Update member pick status
+ */
 export const updateMemberPickStatus = async (req, res) => {
   const { id } = req.params;
   const { hasPick, isPick } = req.body;
 
   try {
+    await connectToDatabase(); // Ensure DB connection
+
     const member = await Member.findByIdAndUpdate(
       id,
-      { 
-        hasPick: hasPick !== undefined ? hasPick : undefined,
-        isPick: isPick !== undefined ? isPick : undefined,
+      {
+        ...(hasPick !== undefined && { hasPick }),
+        ...(isPick !== undefined && { isPick }),
         updatedAt: new Date(),
       },
       { new: true }
