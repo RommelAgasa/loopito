@@ -10,12 +10,18 @@ dotenv.config();
 
 const app = express();
 
+// Define allowed origins
+const allowedOrigins = [
+  'https://loopito-frontend.vercel.app',
+  'http://localhost:3000', // for local development
+];
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like Postman)
+    // Allow requests with no origin (like Postman or mobile apps)
     if (!origin) return callback(null, true);
 
     // Remove trailing slash from incoming origin
