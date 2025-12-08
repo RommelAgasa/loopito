@@ -14,18 +14,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true,
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+
+    // Remove trailing slash from incoming origin
+    const cleanedOrigin = origin.replace(/\/$/, '');
+
+    if (allowedOrigins.includes(cleanedOrigin)) {
+      callback(null, true); // allow this origin
+    } else {
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+  },
+  credentials: true
 }));
 
 // MongoDB Connection
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log('✅ MongoDB Connected');
+    console.log('MongoDB Connected');
     return true;
   } catch (err) {
-    console.error('❌ MongoDB Connection Error:', err.message);
+    console.error('MongoDB Connection Error:', err.message);
     return false;
   }
 };
