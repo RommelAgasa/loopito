@@ -7,7 +7,10 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
   const [christmasImages, setChristmasImages] = useState({});
 
   const christmasEmojis = [
-    '🎅', '🤶', '🦌', '⛄', '🎄', '🎁', '🔔', '⛸️', '❄️', '☃️'
+    '🎅', '🤶', '🦌', '⛄', '🎄', '🎁', '🔔', '⛸️', 
+    '❄️', '☃️', '🧝', '🎄', '🕯️', '🍷', '🍪', '🎀', 
+    '⛪', '🔥', '👼', '💚', '❤️', '🌟', '✨', '🎊', 
+    '🎉', '🛷', '🏂', '⛷️'
   ];
 
   useEffect(() => {
