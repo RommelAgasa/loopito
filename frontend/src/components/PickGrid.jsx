@@ -106,6 +106,8 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
     }
   };
 
+  // Filter out members that have already been picked
+  const availableMembers = members.filter(m => m.isPick !== 1);
 
   if (loading) return (
     <div className="bg-white rounded-2xl shadow-2xl p-8 border-4 border-emerald-700 max-w-4xl mx-auto text-center">
@@ -113,7 +115,7 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
     </div>
   );
 
-  if (members.length === 0) return (
+  if (availableMembers.length === 0) return (
     <div className="bg-white rounded-2xl shadow-2xl p-8 border-4 border-emerald-700 max-w-4xl mx-auto text-center">
       <p className="text-emerald-900 font-semibold">No members available</p>
     </div>
@@ -134,26 +136,25 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-        {members.map(member => {
+        {availableMembers.map(member => {
           const isPicked = picks[member._id];
-          const isAlreadyPicked = member.isPick === 1;
           return (
             <button
               key={member._id}
-              onClick={() => !isPicked && !isAlreadyPicked && handlePickMember(member)}
-              disabled={isPicked || isAlreadyPicked}
+              onClick={() => !isPicked && handlePickMember(member)}
+              disabled={isPicked}
               className={`aspect-square rounded-xl transition-all duration-200 flex flex-col items-center justify-center gap-2 p-3 ${
-                isPicked || isAlreadyPicked
+                isPicked
                   ? 'bg-gray-300 cursor-not-allowed opacity-50'
                   : 'bg-gradient-to-br from-red-100 to-emerald-100 hover:shadow-lg hover:scale-105 cursor-pointer active:scale-95 border-2 border-red-300 hover:border-red-500'
               }`}
             >
               <span className="text-5xl sm:text-6xl">{christmasImages[member._id] || '🎅'}</span>
               <span className="text-xs sm:text-sm font-bold text-emerald-900 text-center line-clamp-2">
-                {isPicked ? member.firstname : isAlreadyPicked ? 'Picked' : '?'}
+                {isPicked ? member.firstname : '?'}
               </span>
-              <span className={`text-xs font-semibold ${(isPicked || isAlreadyPicked) ? 'opacity-100 text-gray-700' : ''}`}>
-                {(isPicked || isAlreadyPicked) ? '✓' : ''}
+              <span className={`text-xs font-semibold ${isPicked ? 'opacity-100 text-gray-700' : ''}`}>
+                {isPicked ? '✓' : ''}
               </span>
             </button>
           );
@@ -161,7 +162,7 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
       </div>
 
       <p className="text-center text-emerald-700 text-xs sm:text-sm font-semibold mt-6">
-        📝 {Object.keys(picks).length + members.filter(m => m.isPick === 1).length} of {members.length} picked
+        📝 {Object.keys(picks).length} of {members.length} picked
       </p>
     </div>
   );
