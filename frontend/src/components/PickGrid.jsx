@@ -160,10 +160,6 @@ export default function PickGrid({ picks, onPick, selectedName, userInfo, logged
           );
         })}
       </div>
-
-      <p className="text-center text-emerald-700 text-xs sm:text-sm font-semibold mt-6">
-        📝 {Object.keys(picks).length} of {members.length} picked
-      </p>
     </div>
   );
 }
